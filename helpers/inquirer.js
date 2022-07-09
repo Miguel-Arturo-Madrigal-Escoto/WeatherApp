@@ -25,13 +25,6 @@ const questions = [
     }
 ]
 
-const pauseQst = [
-    {
-        type: 'input',
-        name: 'confirmacion',
-        message: `Presiona ENTER para continuar`
-    }
-]
 
 const inquirerMenu = async() => {
 
@@ -48,40 +41,46 @@ const inquirerMenu = async() => {
     return opcion;
 }
 
-const pause = () => ( inquirer.prompt(pauseQst) );
+
+
+const pause = () => {
+    const pauseQst = {
+        type: 'input',
+        name: 'confirmacion',
+        message: `Presiona ENTER para continuar`
+    };
+
+    return inquirer.prompt(pauseQst);
+};
 
 const leerInput = async ( message ) => {
-
-    const question = [
-        {
-            type: 'input',
-            name: 'descripcion',
-            message,
-            validate(value) {
-                if (value.length === 0){
-                    return 'Por favor ingrese un valor';
-                }
-                return true;
+    const question = {
+        type: 'input',
+        name: 'descripcion',
+        message,
+        validate(value) {
+            if (value.length === 0){
+                return 'Por favor ingrese un valor';
             }
+            return true;
         }
-    ];
+    };
 
     const { descripcion } = await inquirer.prompt(question);
 
     return descripcion;
-
 }
 
-const listadoTareasBorrar = async(tareas = []) => {
-    const choices = tareas.map((tarea, index) => (
+const listadoLugares = async(lugares = []) => {
+    const choices_lugares = lugares.map((lugar, index) => (
         { 
-            value: tarea.id,
-            name: `${ green( (index + 1) + '.') } ${ tarea.desc }`
+            value: lugar.id,
+            name: `${ green( (index + 1) + '.') } ${ lugar.nombre }`
         }
     ));
 
-    choices.unshift({
-        value: '0',
+    choices_lugares.unshift({
+        value: 0,
         name: green('0. ') + 'Salir'
     });
 
@@ -89,10 +88,12 @@ const listadoTareasBorrar = async(tareas = []) => {
         {
             type: 'list',
             name: 'id',
-            message: 'Borrar',
-            choices
+            message: 'Seleccione lugar:',
+            choices: choices_lugares
         }
     ];
+
+    // Muestra el listado de seleccion de preguntas y devuele el id del seleccionado (name: 'id').
     const { id } = await inquirer.prompt(preguntas);
 
     return id;
@@ -139,7 +140,7 @@ export {
     inquirerMenu, 
     pause, 
     leerInput, 
-    listadoTareasBorrar, 
     confirmar, 
-    listadoTareasCheckBox
+    listadoTareasCheckBox,
+    listadoLugares
 }

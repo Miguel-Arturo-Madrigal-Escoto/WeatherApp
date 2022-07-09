@@ -1,8 +1,10 @@
-import { inquirerMenu, leerInput, pause  } from './helpers/inquirer.js';
+import { inquirerMenu, leerInput, listadoLugares, pause  } from './helpers/inquirer.js';
 import colors from 'colors';
 import Busquedas from './models/busquedas.js';
+import 'dotenv/config';
 
-const { green } = colors;
+const { green, red } = colors;
+
 
 const main = async () => {
     let opt;
@@ -15,23 +17,36 @@ const main = async () => {
 
         switch (opt) {
             case 1:
-                // Mostrar mensaje
-                const lugar = await leerInput('Ciudad: ');
-                // Buscar los lugares
-                await busquedas.ciudad(lugar);
-                // Seleccionar el lugar
+                //! Mostrar mensaje
+                const termino = await leerInput('Ciudad: ');
 
-                //Clima
+                //? Buscar los lugares desde la API
+                const lugares = await busquedas.ciudades(termino);
 
-            
-                //Mostrar resultados
-                console.log(green('\nInformación de la ciudad\n')); 
-                console.log('Ciudad: ',);
-                console.log('Lat: ',);
-                console.log('Lng: ',);
-                console.log('Temperatura: ',);
-                console.log('Mínima: ',);
-                console.log('Máxima: ',);
+                if (lugares.length > 0){
+                    //* Seleccionar el lugar
+                    /* Obtener el id que devuelve la promesa del listadoLugares del prompt (list) de los
+                    lugares obtenidos de la API */
+                    const id = await listadoLugares(lugares);
+                    const lugarSel = lugares.find(lugar => lugar.id === id)
+    
+    
+                    //? Clima
+    
+                
+                    //! Mostrar resultados
+                    console.log(green('\nInformación de la ciudad\n')); 
+                    console.log('Ciudad: ', lugarSel.nombre);
+                    console.log('Lat: ', lugarSel.lat);
+                    console.log('Lng: ', lugarSel.lng);
+                    console.log('Temperatura: ',);
+                    console.log('Mínima: ',);
+                    console.log('Máxima: ',);
+                    
+                } else {
+                    console.log(red(`El lugar ${ termino } no se encuentra en el mapa`));
+                }
+
                 break;
 
             case 2:
