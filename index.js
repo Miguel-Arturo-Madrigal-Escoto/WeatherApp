@@ -32,16 +32,17 @@ const main = async () => {
     
     
                     //? Clima
-    
+                    const climaData = await busquedas.climaLugar(lugarSel.lat, lugarSel.lng);
                 
                     //! Mostrar resultados
                     console.log(green('\nInformación de la ciudad\n')); 
                     console.log('Ciudad: ', lugarSel.nombre);
                     console.log('Lat: ', lugarSel.lat);
                     console.log('Lng: ', lugarSel.lng);
-                    console.log('Temperatura: ',);
-                    console.log('Mínima: ',);
-                    console.log('Máxima: ',);
+                    console.log('Temperatura: ', climaData.temp);
+                    console.log('Mínima: ', climaData.min);
+                    console.log('Máxima: ', climaData.max);
+                    console.log('Como está el clima: ', climaData.desc)
                     
                 } else {
                     console.log(red(`El lugar ${ termino } no se encuentra en el mapa`));
