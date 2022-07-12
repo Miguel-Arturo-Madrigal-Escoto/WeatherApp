@@ -1,11 +1,29 @@
+import fs from 'fs'; // node.js filesystem
 import axios from 'axios';
 
 class Busquedas {
 
-    historial = [];
-
     constructor(){
+        this.historial = [];
+        this.dbPath = `./db/database.json`;
+
         //TODO: Leer de la DB si existe
+        this.leerDB();
+    }
+
+    get historialCapitalizado(){
+        const arr = [];
+        this.historial.forEach(lugar => {
+            let aux = lugar.split(' ');
+            let output = '';
+            for(let i = 0; i < aux.length; i++){
+                let temp = aux[i][0].toLocaleUpperCase() + aux[i].slice(1);
+                output += temp + ' ';
+            }
+            arr.push(output);
+        });
+        
+        return arr;
     }
 
     get paramsMapBox(){
@@ -80,6 +98,42 @@ class Busquedas {
                 max: null,
                 temp: null
             }
+        }
+    }
+
+    agregarHistorial = (lugar = '') => {
+        //TODO: Prevenir guardar el mismo lugar si se vuelve a buscar
+        if (this.historial.includes(lugar.toLocaleLowerCase())) return;
+        
+        this.historial = this.historial.splice(0, 5);
+
+        this.historial.unshift(lugar.toLocaleLowerCase());
+        
+        // Guardar en DB
+        this.guardarDB();
+    }
+
+    guardarDB = () => {
+        const payload = {
+            historial: this.historial
+        };
+        fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+    }
+
+    leerDB = () => {
+        // Leer la DB
+        if (!fs.existsSync(`${ this.dbPath }`)) return;
+
+        const data = fs.readFileSync(this.dbPath, {
+            encoding: 'utf-8'
+        });
+
+        if (data){
+            // Convertir la data (JSON en formato string) en un JSON
+            const dataParsed = JSON.parse(data);
+    
+            // Almacenar en el arreglo
+            this.historial = dataParsed.historial;
         }
     }
 
